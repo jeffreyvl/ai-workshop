@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1782385608556",
+    "name": "Sanne",
+    "birthdate": "1990-06-25",
+    "phone": "0612345678",
+    "tone": "grappig",
+    "note": "padel, goede koffie"
+  },
+  {
+    "id": "1782385608557",
+    "name": "Job",
+    "birthdate": "1988-07-03",
+    "phone": "",
+    "tone": "hartelijk",
+    "note": "reizen, fotografie"
+  }
+]

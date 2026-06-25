@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/dawo-002/AI/hackaton/**)",
+      "Read(//home/dawo-002/AI/hackaton/_template/**)"
+    ]
+  }
+}

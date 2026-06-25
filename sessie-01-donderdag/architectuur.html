@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architectuur — Verjaardags-felicitator</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 980px; margin: 0 auto;
+           padding: 2rem; color: #1e293b; background: #f8fafc; }
+    h1 { color: #7c3aed; }
+    h2 { margin-top: 2.5rem; color: #0f172a; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 1.5rem; margin: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    table { border-collapse: collapse; width: 100%; background: #fff; }
+    td, th { border: 1px solid #e2e8f0; padding: .5rem .75rem; text-align: left; }
+    th { background: #f1f5f9; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>🎂 Verjaardags-felicitator — Architectuur</h1>
+  <p>De app houdt verjaardagen van je vrienden bij, laat zien wie er (binnenkort)
+     jarig is, en stelt lokaal een persoonlijke felicitatie op die je met één klik
+     in WhatsApp opent. Geen AI en geen API-key nodig. Vrienden worden lokaal
+     bewaard in een JSON-bestand.</p>
+
+  <h2>Onderdelen en hoe ze samenwerken</h2>
+  <div class="card">
+    <pre class="mermaid">
+flowchart LR
+    Gebruiker([👤 Medewerker]) -->|invullen + klikken| FE[React + Vite<br/>:5173]
+    FE -->|fetch /api/...| BE[Express backend<br/>:3001]
+    FE -->|stelt felicitatie op| Msg[messages.ts<br/>sjablonen per toon]
+    BE -->|lees / schrijf| Data[(data.json<br/>vrienden)]
+    FE -.->|wa.me link met bericht| WA[📲 WhatsApp]
+    </pre>
+  </div>
+
+  <h2>Datastroom — een felicitatie maken</h2>
+  <div class="card">
+    <pre class="mermaid">
+sequenceDiagram
+    participant G as 👤 Gebruiker
+    participant FE as Frontend :5173
+    participant BE as Backend :3001
+    G->>FE: vult vriend in (naam, datum, toon, interesses)
+    FE->>BE: POST /api/friends
+    BE->>BE: opslaan in data.json
+    Note over FE: App toont countdown<br/>en "vandaag jarig"
+    G->>FE: klik "Felicitatie maken"
+    Note over FE: messages.ts vult sjabloon<br/>(toon + naam + leeftijd + interesses)
+    FE-->>G: toont bericht + knop "Open in WhatsApp"
+    G->>FE: klik WhatsApp
+    FE-->>G: opent wa.me met bericht al ingevuld
+    </pre>
+  </div>
+
+  <h2>Mapstructuur</h2>
+  <div class="card">
+    <pre class="mermaid">
+flowchart TD
+    root[sessie-01-donderdag/]
+    root --> app[app/ — frontend]
+    root --> backend[backend/ — backend]
+    root --> dev[dev.sh — start alles]
+    app --> apptsx[src/App.tsx — UI + felicitatie]
+    app --> apiTs[src/api.ts — calls naar backend]
+    app --> msgTs[src/messages.ts — felicitatie-sjablonen]
+    app --> datesTs[src/dates.ts — verjaardag-rekenwerk]
+    backend --> server[server.js — API/opslag]
+    backend --> data[data.json — opgeslagen vrienden]
+    </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+  </script>
+</body>
+</html>

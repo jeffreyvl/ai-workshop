@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Architectuur — Stemwijzer</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+        color: #1b1b1b;
+        line-height: 1.5;
+      }
+      h1 { color: #154273; }
+      h2 { color: #154273; margin-top: 40px; }
+      .mermaid {
+        background: #f7f9fc;
+        border: 1px solid #e3e8ef;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+        text-align: center;
+      }
+      pre.tree {
+        background: #f3f4f6;
+        border-radius: 8px;
+        padding: 16px;
+        overflow: auto;
+        font-size: 0.9rem;
+      }
+      .intro { color: #4b5563; }
+    </style>
+  </head>
+  <body>
+    <h1>Architectuur — Stemwijzer</h1>
+    <p class="intro">
+      Een lokale Mentimeter-achtige app in de Rijkshuisstijl. Je stelt vragen met
+      antwoordopties op, laat mensen op deze pc stemmen, en bekijkt de resultaten
+      als staafdiagrammen met aantallen en percentages. Alles draait volledig in
+      de browser; er is geen server en geen internetverbinding nodig.
+    </p>
+
+    <h2>Componenten</h2>
+    <pre class="mermaid">
+flowchart LR
+    Gebruiker([Gebruiker]) -->|klik & typt| UI
+    subgraph Browser[Browser op deze pc]
+        UI[React + Vite UI<br/>:5173]
+        NLDD[NL Design System<br/>nldd-* web components]
+        Store[(localStorage<br/>menti-vragen-v1)]
+        UI --- NLDD
+        UI &lt;--&gt;|lees / schrijf| Store
+    end
+    classDef store fill:#e8eef6,stroke:#154273;
+    class Store store;
+    </pre>
+
+    <h2>Datastroom — een stem uitbrengen</h2>
+    <pre class="mermaid">
+sequenceDiagram
+    actor Gebruiker
+    participant UI as React UI
+    participant State as React state
+    participant LS as localStorage
+    Gebruiker->>UI: kiest een antwoord (Stemmen-scherm)
+    UI->>State: registerVote(vraag, antwoord) → +1
+    State->>LS: saveQuestions() (useEffect)
+    State-->>UI: nieuwe staat → opnieuw renderen
+    UI-->>Gebruiker: volgende vraag / "Bedankt"
+    </pre>
+
+    <h2>De drie schermen</h2>
+    <pre class="mermaid">
+flowchart TD
+    App[App.tsx<br/>tabs + gedeelde state] --> B[Vragen beheren<br/>ManageView]
+    App --> S[Stemmen<br/>VoteView]
+    App --> R[Resultaten<br/>ResultsView]
+    B -->|maakt/verwijdert vragen| State[(questions in state + localStorage)]
+    S -->|+1 stem per klik| State
+    R -->|leest & visualiseert| State
+    R --> Chart[BarChart.tsx<br/>CSS-staafdiagram]
+    </pre>
+
+    <h2>Mapstructuur</h2>
+    <pre class="tree">
+sessie-01/
+├── ARCHITECTUUR.md          ← dit document (bron)
+├── README.md                ← wat het is + hoe te starten
+└── app/                     ← de Vite + React applicatie
+    ├── index.html
+    └── src/
+        ├── main.tsx         ← opstart: registreert NLDD, mount React
+        ├── App.tsx          ← tabnavigatie + gedeelde state + opslag
+        ├── ManageView.tsx   ← vragen + antwoorden aanmaken/verwijderen
+        ├── VoteView.tsx     ← stemmen, één vraag tegelijk
+        ├── ResultsView.tsx  ← resultaten + export (JSON) + reset
+        ├── BarChart.tsx     ← horizontale staafdiagrammen in pure CSS
+        ├── storage.ts       ← lezen/schrijven naar localStorage
+        ├── types.ts         ← datamodel (Question, Answer)
+        ├── nldd.d.ts        ← TypeScript: staat &lt;nldd-*&gt; toe in JSX
+        └── index.css        ← layout + NLDD-tokens (Rijkshuisstijl)
+    </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+  </body>
+</html>
