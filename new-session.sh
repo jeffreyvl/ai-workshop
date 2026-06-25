@@ -8,8 +8,10 @@ set -e
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Bepaal het sessienummer (laagste beschikbare)
+# Matcht zowel "sessie-01" als "sessie-01-naam"
 N=1
-while ls -d "$BASE_DIR/sessie-$(printf '%02d' $N)-"* &>/dev/null 2>&1; do
+while compgen -G "$BASE_DIR/sessie-$(printf '%02d' $N)" > /dev/null || \
+      compgen -G "$BASE_DIR/sessie-$(printf '%02d' $N)-*" > /dev/null; do
   N=$((N + 1))
 done
 

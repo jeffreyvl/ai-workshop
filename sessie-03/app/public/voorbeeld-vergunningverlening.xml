@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.opengroup.org/xsd/archimate/3.0/"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       identifier="id-model-vergunning">
+  <name xml:lang="nl">Vergunningverlening Gemeente Westerveld</name>
+  <documentation xml:lang="nl">Architectuurmodel voor het verlenen van vergunningen.</documentation>
+  <elements>
+    <element identifier="el-actor-gemeente" xsi:type="BusinessActor">
+      <name xml:lang="nl">Gemeente Westerveld</name>
+      <documentation xml:lang="nl">De vergunningverlenende overheidsorganisatie.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">College van B&amp;W</value></property></properties>
+    </element>
+    <element identifier="el-role-behandelaar" xsi:type="BusinessRole">
+      <name xml:lang="nl">Vergunningbehandelaar</name>
+      <documentation xml:lang="nl">Medewerker die aanvragen behandelt.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">Afdeling Vergunningen</value></property></properties>
+    </element>
+    <element identifier="el-svc-vergunning" xsi:type="BusinessService">
+      <name xml:lang="nl">Vergunningverlening</name>
+      <documentation xml:lang="nl">Dienst richting burger: het verlenen van een vergunning.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">Afdeling Vergunningen</value></property></properties>
+    </element>
+    <element identifier="el-proc-behandelen" xsi:type="BusinessProcess">
+      <name xml:lang="nl">Vergunningaanvraag behandelen</name>
+      <documentation xml:lang="nl">Het in behandeling nemen van een binnengekomen aanvraag.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">Afdeling Vergunningen</value></property></properties>
+    </element>
+    <element identifier="el-proc-beoordelen" xsi:type="BusinessProcess">
+      <name xml:lang="nl">Aanvraag beoordelen</name>
+      <documentation xml:lang="nl">Inhoudelijke toetsing van de aanvraag aan regelgeving.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">Afdeling Vergunningen</value></property></properties>
+    </element>
+    <element identifier="el-proc-archiveren" xsi:type="BusinessProcess">
+      <name xml:lang="nl">archiveren</name>
+      <documentation xml:lang="nl"></documentation>
+    </element>
+    <element identifier="el-proc-naamloos" xsi:type="BusinessProcess">
+      <name xml:lang="nl"></name>
+    </element>
+    <element identifier="el-bo-aanvraag" xsi:type="BusinessObject">
+      <name xml:lang="nl">Vergunningaanvraag</name>
+      <documentation xml:lang="nl">De aanvraag zoals ingediend door de burger.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">Afdeling Vergunningen</value></property></properties>
+    </element>
+    <element identifier="el-bo-besluit" xsi:type="BusinessObject">
+      <name xml:lang="nl">Besluit</name>
+      <documentation xml:lang="nl">Het genomen besluit op de aanvraag.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">Afdeling Vergunningen</value></property></properties>
+    </element>
+    <element identifier="el-do-aanvraaggegevens" xsi:type="DataObject">
+      <name xml:lang="nl">Aanvraaggegevens</name>
+      <documentation xml:lang="nl">Gestructureerde gegevens van de aanvraag.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property></properties>
+    </element>
+    <element identifier="el-do-dup" xsi:type="DataObject">
+      <name xml:lang="nl">Aanvraaggegevens</name>
+      <documentation xml:lang="nl">Tweede, dubbel gemodelleerd gegevensobject.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property></properties>
+    </element>
+    <element identifier="el-app-vth" xsi:type="ApplicationComponent">
+      <name xml:lang="nl">VTH-systeem</name>
+      <documentation xml:lang="nl">Vergunningen-, Toezicht- en Handhavingssysteem.</documentation>
+      <properties>
+        <property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property>
+        <property propertyDefinitionRef="propid-status"><value xml:lang="nl">In productie</value></property>
+      </properties>
+    </element>
+    <element identifier="el-svc-registreren" xsi:type="ApplicationService">
+      <name xml:lang="nl">Aanvraag registreren</name>
+      <documentation xml:lang="nl">Applicatiedienst voor het vastleggen van een aanvraag.</documentation>
+      <properties>
+        <property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property>
+        <property propertyDefinitionRef="propid-status"><value xml:lang="nl">In productie</value></property>
+      </properties>
+    </element>
+    <element identifier="el-app-zaak" xsi:type="ApplicationComponent">
+      <name xml:lang="nl">Zaaksysteem</name>
+      <documentation xml:lang="nl">Generiek zaaksysteem (mist beheergegevens en serverkoppeling).</documentation>
+    </element>
+    <element identifier="el-app-archief" xsi:type="ApplicationComponent">
+      <name xml:lang="nl">Oud archiefsysteem</name>
+      <documentation xml:lang="nl">Verouderd systeem zonder relaties — kandidaat voor uitfasering.</documentation>
+    </element>
+    <element identifier="el-node-server" xsi:type="Node">
+      <name xml:lang="nl">Applicatieserver Linux</name>
+      <documentation xml:lang="nl">Server waarop de applicaties draaien.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property></properties>
+    </element>
+    <element identifier="el-sys-db" xsi:type="SystemSoftware">
+      <name xml:lang="nl">PostgreSQL-database</name>
+      <documentation xml:lang="nl">Relationele database voor de vergunninggegevens.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property></properties>
+    </element>
+    <element identifier="el-art-war" xsi:type="Artifact">
+      <name xml:lang="nl">vth-applicatie.war</name>
+      <documentation xml:lang="nl">Deploybaar artefact van het VTH-systeem.</documentation>
+      <properties><property propertyDefinitionRef="propid-eigenaar"><value xml:lang="nl">ICT-beheer</value></property></properties>
+    </element>
+  </elements>
+  <relationships>
+    <relationship identifier="rel-1" xsi:type="Assignment" source="el-actor-gemeente" target="el-role-behandelaar"/>
+    <relationship identifier="rel-2" xsi:type="Assignment" source="el-role-behandelaar" target="el-proc-behandelen"/>
+    <relationship identifier="rel-3" xsi:type="Triggering" source="el-proc-behandelen" target="el-proc-beoordelen"/>
+    <relationship identifier="rel-4" xsi:type="Realization" source="el-proc-behandelen" target="el-svc-vergunning"/>
+    <relationship identifier="rel-5" xsi:type="Access" source="el-proc-behandelen" target="el-bo-aanvraag"/>
+    <relationship identifier="rel-6" xsi:type="Access" source="el-proc-beoordelen" target="el-bo-besluit"/>
+    <relationship identifier="rel-7" xsi:type="Serving" source="el-svc-registreren" target="el-proc-behandelen"/>
+    <relationship identifier="rel-8" xsi:type="Realization" source="el-app-vth" target="el-svc-registreren"/>
+    <relationship identifier="rel-9" xsi:type="Access" source="el-app-vth" target="el-do-aanvraaggegevens"/>
+    <relationship identifier="rel-10" xsi:type="Realization" source="el-do-aanvraaggegevens" target="el-bo-aanvraag"/>
+    <relationship identifier="rel-11" xsi:type="Assignment" source="el-node-server" target="el-app-vth"/>
+    <relationship identifier="rel-12" xsi:type="Composition" source="el-node-server" target="el-sys-db"/>
+    <relationship identifier="rel-13" xsi:type="Realization" source="el-art-war" target="el-app-vth"/>
+    <relationship identifier="rel-14" xsi:type="Access" source="el-app-zaak" target="el-do-dup"/>
+    <relationship identifier="rel-bad-1" xsi:type="Access" source="el-proc-beoordelen" target="el-app-vth"/>
+    <relationship identifier="rel-bad-2" xsi:type="Serving" source="el-sys-db" target="el-proc-beoordelen"/>
+    <relationship identifier="rel-bad-3" xsi:type="Serving" source="el-app-vth" target="el-niet-bestaand"/>
+    <relationship identifier="rel-bad-4" xsi:type="Access" source="el-proc-archiveren" target="el-bo-besluit"/>
+  </relationships>
+  <propertyDefinitions>
+    <propertyDefinition identifier="propid-eigenaar" type="string"><name xml:lang="nl">Eigenaar</name></propertyDefinition>
+    <propertyDefinition identifier="propid-status" type="string"><name xml:lang="nl">Status</name></propertyDefinition>
+  </propertyDefinitions>
+</model>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architectuur — Architectuur-validatietool</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; color: #1e293b; line-height: 1.5; }
+    h1 { font-size: 1.8rem; } h2 { margin-top: 2.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: .3rem; }
+    .mermaid { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+    table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #e2e8f0; padding: .5rem .75rem; text-align: left; }
+    code { background: #f1f5f9; padding: .1rem .3rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Architectuur — Architectuur-validatietool</h1>
+  <p>Een dashboard dat een <strong>ArchiMate Exchange-XML</strong> inleest en toetst aan een
+  <strong>metamodel</strong> (standaard ArchiMate-relatieregels + eigen regels). Het toont per
+  laag de afwijkingen met grafieken en een filterbare lijst. Alles draait lokaal in de browser.</p>
+
+  <h2>Architectuur</h2>
+  <pre class="mermaid">
+flowchart LR
+    Gebruiker -->|upload XML / kies voorbeeld| UI[React-dashboard<br/>Vite + Tailwind]
+    UI -->|tekst| Parser[archimate.ts<br/>XML-parser]
+    Parser -->|model: elementen + relaties| Validator[validate.ts<br/>validatie-engine]
+    Regels[(metamodel.ts<br/>eigen regels)] --> Validator
+    Standaard[(ArchiMate<br/>relatieregels)] --> Validator
+    Validator -->|bevindingen| UI
+    UI -->|grafieken + lijst| Gebruiker
+  </pre>
+
+  <h2>Datastroom</h2>
+  <pre class="mermaid">
+sequenceDiagram
+    actor Gebruiker
+    participant UI as Dashboard
+    participant P as Parser
+    participant V as Validator
+    participant M as Metamodel
+    Gebruiker->>UI: upload ArchiMate Exchange-XML
+    UI->>P: parseArchimate(xml)
+    P-->>UI: model {elementen, relaties}
+    UI->>V: validate(model)
+    V->>M: lees regels
+    V-->>UI: bevindingen[]
+    UI-->>Gebruiker: KPI's + grafieken + lijst
+  </pre>
+
+  <h2>Welke checks draaien er</h2>
+  <pre class="mermaid">
+flowchart TD
+    Model[Gevalideerd model] --> C1[1. Laagovergangen]
+    Model --> C2[2. Verplichte attributen]
+    Model --> C3[3. Verplichte koppelingen]
+    Model --> C4[4. Naamgeving & dubbelen]
+    Model --> C5[5. Standaard ArchiMate-regels]
+    C1 & C2 & C3 & C4 & C5 --> F[Bevindingen<br/>fout / waarschuwing / info]
+  </pre>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs'
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' })
+  </script>
+</body>
+</html>
