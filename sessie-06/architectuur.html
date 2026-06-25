@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architectuur · Dashboard Inclusieve Arbeidsmarkt</title>
+    <style>
+      body {
+        font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1e293b;
+        background: #f8fafc;
+        line-height: 1.55;
+      }
+      h1 { color: #154273; }
+      h2 { color: #154273; margin-top: 2.5rem; }
+      .mermaid {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        text-align: center;
+      }
+      table { border-collapse: collapse; width: 100%; background: #fff; }
+      th, td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
+      th { background: #eef4fb; }
+      code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; }
+    </style>
+  </head>
+  <body>
+    <h1>Architectuur — Dashboard Inclusieve Arbeidsmarkt</h1>
+    <p>
+      Een <strong>signaaldashboard</strong> dat ontwikkelingen rond uitkeringen,
+      arbeidsongeschiktheid en regionale verschillen in één oogopslag zichtbaar maakt.
+      Puur front-end: de browser haalt <strong>live, echte cijfers</strong> op bij
+      CBS StatLine Open Data (CORS) — geen backend of database nodig.
+    </p>
+
+    <h2>Architectuur</h2>
+    <pre class="mermaid">
+flowchart LR
+    Gebruiker -->|opent in browser| Browser
+    Browser -->|fetch CORS| CBS[("CBS StatLine<br/>Open Data<br/>37789ksz · 80794ned · 85615NED")]
+
+    subgraph Browser["Browser — React + Vite (:5176)"]
+        App["App.tsx<br/>laadt &amp; verdeelt data"]
+        Cbs["cbs.ts<br/>ophalen + afleiden"]
+        KPI["KPI-kaarten"]
+        Trend["Trendgrafiek"]
+        Signalen["Signalenpaneel<br/>afgeleid uit cijfers"]
+        Verdeling["Donut + staafgrafiek"]
+        Tabel["Provincietabel<br/>sorteerbaar"]
+    end
+
+    CBS --> Cbs --> App
+    App --> KPI &amp; Trend &amp; Signalen &amp; Verdeling &amp; Tabel
+    KPI &amp; Trend &amp; Verdeling &amp; Tabel -->|render| Recharts[("Recharts<br/>grafieken")]
+    </pre>
+
+    <h2>Datastroom</h2>
+    <pre class="mermaid">
+sequenceDiagram
+    participant G as Gebruiker
+    participant A as App.tsx
+    participant C as cbs.ts
+    participant CBS as CBS Open Data
+    participant R as Recharts
+
+    G->>A: opent http://localhost:5176
+    A->>C: haalDashboardData()
+    C->>CBS: GET 37789ksz (per soort, maandreeks)
+    C->>CBS: GET 80794ned (per provincie)
+    C->>CBS: GET 85615NED (in-/uitstroom bijstand)
+    CBS-->>C: JSON met echte cijfers
+    C-->>A: KPI's, trend, verdeling, regio's + signalen
+    A->>R: geeft data door aan grafieken
+    R-->>G: tekent KPI's, grafieken en tabel
+    </pre>
+
+    <h2>Techkeuzes</h2>
+    <table>
+      <tr><th>Onderdeel</th><th>Keuze</th><th>Waarom</th></tr>
+      <tr><td>Frontend</td><td>Vite + React + TypeScript</td><td>Snelste dev-server, type-veilig</td></tr>
+      <tr><td>Styling</td><td>Tailwind CSS</td><td>Snel en flexibel (geen overheidshuisstijl gewenst)</td></tr>
+      <tr><td>Grafieken</td><td>Recharts</td><td>Eenvoudige, mooie React-grafieken</td></tr>
+      <tr><td>Data</td><td>CBS StatLine Open Data (live)</td><td>Echte, openbare cijfers via CORS — geen backend/DB nodig</td></tr>
+    </table>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs'
+      mermaid.initialize({ startOnLoad: true, theme: 'default' })
+    </script>
+  </body>
+</html>

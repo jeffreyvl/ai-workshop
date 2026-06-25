@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Architectuur — Fractie-Radar Volt Soest</title>
+    <style>
+      body {
+        font: 16px/1.5 system-ui, sans-serif;
+        max-width: 920px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #1e293b;
+      }
+      h1 { color: #502379; }
+      h2 { color: #502379; margin-top: 2.5rem; }
+      .mermaid {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+      p { color: #475569; }
+    </style>
+  </head>
+  <body>
+    <h1>Fractie-Radar · Volt Soest</h1>
+    <p>
+      Een briefing-dashboard dat live op het web zoekt naar belangrijke
+      ontwikkelingen (lokaal, regionaal, landelijk, Europees, geopolitiek) en die voor een
+      raadslid omzet in samenvattingen plus concrete vragen voor het college.
+    </p>
+
+    <h2>Architectuur</h2>
+    <pre class="mermaid">
+flowchart LR
+    Gebruiker -->|focusthema + klik| Frontend["React + Vite + Tailwind<br/>:5173"]
+    Frontend -->|POST /api/briefing| Backend["Express<br/>:3005"]
+    Backend -->|met key: AI-modus| Claude[("Claude<br/>claude-opus-4-8")]
+    Claude -->|web_search tool| Web[("Live web")]
+    Web --> Claude
+    Backend -->|zonder key: nieuws-modus| RSS[("Nieuws-RSS<br/>Google News")]
+    Claude -->|JSON-briefing| Backend
+    RSS -->|artikelen| Backend
+    Backend -->|items + bronnen| Frontend
+    Frontend -->|kaarten met vragen| Gebruiker
+    </pre>
+
+    <h2>Datastroom</h2>
+    <pre class="mermaid">
+sequenceDiagram
+    actor R as Raadslid
+    participant F as Frontend (5173)
+    participant B as Backend (3005)
+    participant C as Claude API
+    participant W as Web search
+
+    R->>F: vult focusthema in, klikt "Genereer briefing"
+    F->>B: POST /api/briefing { focus }
+    B->>C: prompt + web_search tool (streaming)
+    C->>W: zoekopdrachten (lokaal/regionaal/landelijk/EU/geopolitiek)
+    W-->>C: zoekresultaten + bronnen
+    C-->>B: JSON met 6–8 ontwikkelingen
+    B-->>F: { items: [...], gegenereerd_op }
+    F-->>R: kaarten: samenvatting, relevantie, vragen, bronnen
+    </pre>
+
+    <h2>Mapstructuur</h2>
+    <pre class="mermaid">
+flowchart TD
+    root["sessie-05/"] --> app["app/ — frontend"]
+    root --> backend["backend/ — API"]
+    root --> dev["dev.sh — start beide samen"]
+    app --> apptsx["src/App.tsx — dashboard + kaarten"]
+    app --> css["src/index.css — Tailwind"]
+    backend --> server["server.js — POST /api/briefing"]
+    </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs'
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' })
+    </script>
+  </body>
+</html>
